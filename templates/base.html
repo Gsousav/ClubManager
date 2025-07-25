@@ -14,7 +14,7 @@
     <!-- Navigation - Clean, minimal -->
     <nav class="navbar navbar-expand-lg navbar-main">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
                 <i class="fas fa-cricket me-2 navbar-brand-icon"></i>
                 Cricket Club
             </a>
@@ -24,27 +24,27 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('index') }}">
+                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('main.index') }}">
                             <i class="fas fa-home me-1"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('players') }}">
+                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('players.list_players') }}">
                             <i class="fas fa-users me-1"></i> Players
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('matches') }}">
+                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('matches.list_matches') }}">
                             <i class="fas fa-calendar me-1"></i> Matches
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('payments') }}">
+                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('payments.list_payments') }}">
                             <i class="fas fa-money-bill me-1"></i> Payments
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('overdue') }}">
+                        <a class="nav-link px-3 py-2 rounded-2" href="{{ url_for('main.overdue') }}">
                             <i class="fas fa-exclamation-triangle me-1"></i> Overdue
                         </a>
                     </li>

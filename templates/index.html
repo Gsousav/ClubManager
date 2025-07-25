@@ -11,7 +11,7 @@
 <!-- Stats Cards -->
 <div class="row g-4 mb-5">
     <div class="col-md-3">
-        <a href="{{ url_for('players') }}" class="text-decoration-none">
+        <a href="{{ url_for('players.list_players') }}" class="text-decoration-none">
             <div class="card text-center h-100 border-0"
                 style="background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%); color: white; transition: transform 0.2s ease; cursor: pointer;">
                 <div class="card-body d-flex flex-column justify-content-center">
@@ -23,7 +23,7 @@
         </a>
     </div>
     <div class="col-md-3">
-        <a href="{{ url_for('overdue') }}" class="text-decoration-none">
+        <a href="{{ url_for('main.overdue') }}" class="text-decoration-none">
             <div class="card text-center h-100 border-0"
                 style="background: linear-gradient(135deg, #ff9500 0%, #ffcc02 100%); color: white; transition: transform 0.2s ease; cursor: pointer;">
                 <div class="card-body d-flex flex-column justify-content-center">
@@ -35,7 +35,7 @@
         </a>
     </div>
     <div class="col-md-3">
-        <a href="{{ url_for('payments') }}" class="text-decoration-none">
+        <a href="{{ url_for('payments.list_payments') }}" class="text-decoration-none">
             <div class="card text-center h-100 border-0"
                 style="background: linear-gradient(135deg, #30d158 0%, #32d74b 100%); color: white; transition: transform 0.2s ease; cursor: pointer;">
                 <div class="card-body d-flex flex-column justify-content-center">
@@ -51,7 +51,7 @@
             <div class="card-body d-flex flex-column justify-content-center">
                 <i class="fas fa-download fa-2x mb-3" style="color: #5ac8fa;"></i>
                 <h6 style="font-weight: 500; margin-bottom: 12px;">Export Data</h6>
-                <a href="{{ url_for('export_overdue') }}" class="btn btn-outline-info btn-sm">
+                <a href="{{ url_for('players.export_overdue') }}" class="btn btn-outline-info btn-sm">
                     <i class="fas fa-file-excel me-1"></i> Excel Report
                 </a>
             </div>
@@ -71,7 +71,7 @@
                         Player Balances
                         <span class="table-counter text-secondary text-sm">{{ players|length }} players</span>
                     </h5>
-                    <a href="{{ url_for('add_player') }}" class="btn btn-primary">
+                    <a href="{{ url_for('players.add_player') }}" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Add Player
                     </a>
                 </div>
@@ -132,7 +132,7 @@
                                         {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{{ url_for('add_payment') }}?player_id={{ player.id }}"
+                                    <a href="{{ url_for('payments.add_payment') }}?player_id={{ player.id }}"
                                         class="btn btn-outline-success btn-sm">
                                         <i class="fas fa-plus"></i>
                                     </a>
@@ -161,13 +161,13 @@
                     <i class="fas fa-bolt me-2" style="color: #ff9500;"></i>Quick Actions
                 </h6>
                 <div class="d-grid gap-3">
-                    <a href="{{ url_for('create_match') }}" class="btn btn-primary">
+                    <a href="{{ url_for('matches.create_match') }}" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i> New Match
                     </a>
-                    <a href="{{ url_for('add_payment') }}" class="btn btn-outline-success">
+                    <a href="{{ url_for('payments.add_payment') }}" class="btn btn-outline-success">
                         <i class="fas fa-money-bill me-2"></i> Record Payment
                     </a>
-                    <a href="{{ url_for('overdue') }}" class="btn btn-outline-danger">
+                    <a href="{{ url_for('main.overdue') }}" class="btn btn-outline-danger">
                         <i class="fas fa-exclamation-triangle me-2"></i> View Overdue
                     </a>
                 </div>

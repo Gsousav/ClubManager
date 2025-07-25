@@ -11,7 +11,7 @@
         </h1>
         <p class="page-subheader">Players with outstanding balances</p>
     </div>
-    <a href="{{ url_for('export_overdue') }}" class="btn btn-outline-info">
+                <a href="{{ url_for('players.export_overdue') }}" class="btn btn-outline-info">
         <i class="fas fa-file-excel me-2"></i> Export Excel
     </a>
 </div>
@@ -81,7 +81,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ url_for('add_payment') }}?player_id={{ player.id }}"
+                            <a href="{{ url_for('payments.add_payment') }}?player_id={{ player.id }}"
                                 class="btn btn-success btn-sm">
                                 <i class="fas fa-plus me-1"></i> Record Payment
                             </a>
@@ -131,13 +131,13 @@
                     Quick Actions
                 </h6>
                 <div class="d-grid gap-3">
-                    <a href="{{ url_for('export_overdue') }}" class="btn btn-outline-info">
+                    <a href="{{ url_for('players.export_overdue') }}" class="btn btn-outline-info">
                         <i class="fas fa-file-csv me-2"></i> Export Overdue Report
                     </a>
-                    <a href="{{ url_for('add_payment') }}" class="btn btn-success">
+                    <a href="{{ url_for('payments.add_payment') }}" class="btn btn-success">
                         <i class="fas fa-money-bill me-2"></i> Record Payment
                     </a>
-                    <a href="{{ url_for('players') }}" class="btn btn-outline-primary">
+                    <a href="{{ url_for('players.list_players') }}" class="btn btn-outline-primary">
                         <i class="fas fa-users me-2"></i> View All Players
                     </a>
                 </div>
@@ -157,7 +157,7 @@
         <p class="empty-state-text">
             All players are up to date with their payments.
         </p>
-        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary">
             <i class="fas fa-home me-2"></i> Back to Dashboard
         </a>
     </div>

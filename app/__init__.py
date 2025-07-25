@@ -9,7 +9,13 @@ def create_app(config_name=None):
     if config_name is None:
         config_name = os.environ.get('FLASK_ENV', 'default')
     
-    app = Flask(__name__)
+    # Get the project root directory (parent of app package)
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Create Flask app with correct template and static paths
+    app = Flask(__name__, 
+                template_folder=os.path.join(project_root, 'templates'),
+                static_folder=os.path.join(project_root, 'static'))
     app.config.from_object(config[config_name])
     
     # Initialize extensions

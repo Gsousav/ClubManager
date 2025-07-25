@@ -12,10 +12,10 @@
         <p style="color: #6e6e73; margin: 0;">Manage your cricket club members</p>
     </div>
     <div>
-        <a href="{{ url_for('import_players') }}" class="btn btn-outline-success me-2">
+        <a href="{{ url_for('players.import_players') }}" class="btn btn-outline-success me-2">
             <i class="fas fa-file-import me-1"></i> Import Excel
         </a>
-        <a href="{{ url_for('add_player') }}" class="btn btn-primary">
+        <a href="{{ url_for('players.add_player') }}" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i> Add Player
         </a>
     </div>
@@ -81,7 +81,7 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a href="{{ url_for('add_payment') }}?player_id={{ player.id }}"
+                                <a href="{{ url_for('payments.add_payment') }}?player_id={{ player.id }}"
                                     class="btn btn-outline-success btn-sm" title="Add Payment">
                                     <i class="fas fa-plus"></i>
                                 </a>
@@ -89,7 +89,7 @@
                                     onclick="showPlayerDetails('{{ player.id }}')" title="View Details">
                                     <i class="fas fa-info-circle"></i>
                                 </button>
-                                <a href="{{ url_for('edit_player', player_id=player.id) }}"
+                                <a href="{{ url_for('players.edit_player', player_id=player.id) }}"
                                     class="btn btn-outline-primary btn-sm" title="Edit Player">
                                     <i class="fas fa-edit"></i>
                                 </a>

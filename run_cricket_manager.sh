@@ -155,7 +155,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
 fi
 
 # Verify we're using the correct Python inside the venv
-VENV_PYTHON_VERSION=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+VENV_PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
 print_status "✅ Virtual environment active (Python $VENV_PYTHON_VERSION)"
 
 # Now use the virtual environment's python and pip
@@ -180,8 +180,40 @@ fi
 
 # Kill any existing processes
 print_status "🔧 Cleaning up existing processes..."
+
+# More comprehensive process cleanup
 pkill -f "gunicorn.*run:app" 2>/dev/null || true
 pkill -f "python.*run.py" 2>/dev/null || true
+pkill -f "python3.*run.py" 2>/dev/null || true
+pkill -f "run_cricket_manager" 2>/dev/null || true
+
+# Check if port 8080 is still in use
+if lsof -i :8080 >/dev/null 2>&1; then
+    print_warning "⚠️  Port 8080 is still in use. Attempting to free it..."
+    # Kill any process using port 8080
+    PIDS=$(lsof -t -i :8080 2>/dev/null || true)
+    if [ ! -z "$PIDS" ]; then
+        echo "$PIDS" | xargs kill -9 2>/dev/null || true
+        sleep 2
+    fi
+fi
+
+# Final check
+if lsof -i :8080 >/dev/null 2>&1; then
+    print_error "❌ Port 8080 is still in use. Please free the port manually and try again."
+    echo "   You can check what's using the port with: lsof -i :8080"
+    exit 1
+fi
+
+print_success "✅ Port 8080 is available"
+
+# Check if python3 is available
+if ! command -v python3 >/dev/null 2>&1; then
+    print_error "❌ python3 not found!"
+    echo "Please install Python 3.12+ and ensure 'python3' command is available."
+    echo "Visit https://python.org for installation instructions."
+    exit 1
+fi
 
 # Clean up old log file
 if [ -f "gunicorn.log" ]; then
@@ -198,7 +230,7 @@ echo ""
 
 # Run the app with gunicorn (production WSGI server) in background
 print_status "🏃 Starting gunicorn server in background..."
-nohup python -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 run:app > gunicorn.log 2>&1 &
+nohup python3 -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 run:app > gunicorn.log 2>&1 &
 GUNICORN_PID=$!
 
 # Wait for server to start and check if it's running
