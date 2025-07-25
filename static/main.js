@@ -578,6 +578,27 @@ function showDeletePaymentConfirmation(playerName, paymentDate, paymentAmount, p
     new bootstrap.Modal(document.getElementById('deletePaymentConfirmationModal')).show();
 }
 
+// Delete match confirmation modal functionality
+function showDeleteMatchConfirmation(button) {
+    // Get data from button attributes
+    const matchName = button.getAttribute('data-match-name');
+    const matchDate = button.getAttribute('data-match-date');
+    const playersCount = button.getAttribute('data-players-count');
+    const matchId = button.getAttribute('data-match-id');
+    
+    // Set the match details in the modal
+    document.getElementById('deleteMatchName').textContent = matchName;
+    document.getElementById('deleteMatchDate').textContent = matchDate;
+    document.getElementById('deleteMatchPlayers').textContent = playersCount + ' players';
+    
+    // Set the form action to the correct delete URL
+    const deleteForm = document.getElementById('deleteMatchForm');
+    deleteForm.action = `/matches/delete/${matchId}`;
+    
+    // Show the modal
+    new bootstrap.Modal(document.getElementById('deleteMatchConfirmationModal')).show();
+}
+
 // Export functions to global scope for onclick handlers
 window.showPlayerDetails = showPlayerDetails;
 window.showMatchDetails = showMatchDetails;
@@ -587,4 +608,5 @@ window.clearTableFilters = clearTableFilters;
 window.clearPlayerFilters = clearPlayerFilters;
 window.testFiltering = testFiltering;
 window.showDeleteConfirmation = showDeleteConfirmation;
-window.showDeletePaymentConfirmation = showDeletePaymentConfirmation; 
+window.showDeletePaymentConfirmation = showDeletePaymentConfirmation;
+window.showDeleteMatchConfirmation = showDeleteMatchConfirmation; 
