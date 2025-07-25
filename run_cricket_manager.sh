@@ -75,6 +75,18 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
+# Check for curl (needed for server health check)
+if ! command -v curl &> /dev/null; then
+    print_warning "⚠️  curl not found. Server health check will be skipped."
+    echo "To install curl:"
+    echo "  Ubuntu/Debian: sudo apt install curl"
+    echo "  CentOS/RHEL:   sudo yum install curl" 
+    echo "  macOS:         curl is usually pre-installed"
+    CURL_AVAILABLE=false
+else
+    CURL_AVAILABLE=true
+fi
+
 # Store the Python executable path to ensure consistency
 PYTHON_EXEC=$(which python3)
 print_status "🐍 Using Python at: $PYTHON_EXEC"
@@ -171,6 +183,12 @@ print_status "🔧 Cleaning up existing processes..."
 pkill -f "gunicorn.*app:app" 2>/dev/null || true
 pkill -f "python.*app.py" 2>/dev/null || true
 
+# Clean up old log file
+if [ -f "gunicorn.log" ]; then
+    rm -f "gunicorn.log"
+    print_status "🗑️  Cleaned up old log file"
+fi
+
 # Start the application
 print_success "🚀 Starting Cricket Club Manager..."
 echo "   Production WSGI server (gunicorn) will be available at: http://127.0.0.1:8080"
@@ -178,15 +196,44 @@ echo "   Running with 2 workers for better performance"
 echo "   Press Ctrl+C to stop"
 echo ""
 
-# Run the app with gunicorn (production WSGI server)
-print_status "🏃 Running application with gunicorn..."
-if ! python -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 app:app; then
+# Run the app with gunicorn (production WSGI server) in background
+print_status "🏃 Starting gunicorn server in background..."
+nohup python -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 app:app > gunicorn.log 2>&1 &
+GUNICORN_PID=$!
+
+# Wait for server to start and check if it's running
+print_status "⏳ Waiting for server to start..."
+sleep 3
+
+# Check if the process is still running
+if ! kill -0 $GUNICORN_PID 2>/dev/null; then
     print_error "❌ Application failed to start!"
     echo "Check the error messages above for details."
     exit 1
 fi
 
-# Detect and open browser after a short delay
+# Test if server is responding
+if [ "$CURL_AVAILABLE" = true ]; then
+    print_status "🔍 Testing server connection..."
+    for i in {1..10}; do
+        if curl -s http://127.0.0.1:8080 >/dev/null 2>&1; then
+            print_success "✅ Server is responding!"
+            break
+        fi
+        if [ $i -eq 10 ]; then
+            print_error "❌ Server not responding after 10 attempts"
+            kill $GUNICORN_PID 2>/dev/null
+            exit 1
+        fi
+        sleep 1
+    done
+else
+    print_warning "⚠️  Skipping health check (curl not available)"
+    print_status "⏳ Giving server extra time to start..."
+    sleep 2
+fi
+
+# Detect and open browser
 BROWSER_CMD=$(detect_browser_command)
 if [ -n "$BROWSER_CMD" ]; then
     print_status "🌐 Opening browser..."
@@ -194,4 +241,28 @@ if [ -n "$BROWSER_CMD" ]; then
 else
     print_warning "⚠️  Could not detect browser command. Please open http://127.0.0.1:8080 manually."
 fi
+
+print_success "✨ Cricket Club Manager is now running!"
+echo ""
+echo "📊 Server Information:"
+echo "   URL: http://127.0.0.1:8080"
+echo "   Process ID: $GUNICORN_PID"
+echo "   Workers: 2"
+echo "   Log file: gunicorn.log"
+echo ""
+echo "🛑 To stop the server:"
+echo "   kill $GUNICORN_PID"
+echo "   or use: pkill -f 'gunicorn.*app:app'"
+echo ""
+echo "📝 Server will continue running even after closing this terminal!"
+echo "   The server runs independently using 'nohup'"
+echo "   Check 'gunicorn.log' for server output and errors"
+echo ""
+print_status "🎯 Press Enter to stop the server, or Ctrl+C to exit and leave server running..."
+read -r
+
+# Stop the server if user pressed Enter
+print_status "🛑 Stopping server..."
+kill $GUNICORN_PID 2>/dev/null
+print_success "✅ Server stopped!"
 
