@@ -176,6 +176,14 @@ echo "   Server will be available at: http://127.0.0.1:8080"
 echo "   Press Ctrl+C to stop"
 echo ""
 
+# Run the app
+print_status "🏃 Running application..."
+if ! python app.py; then
+    print_error "❌ Application failed to start!"
+    echo "Check the error messages above for details."
+    exit 1
+fi
+
 # Detect and open browser after a short delay
 BROWSER_CMD=$(detect_browser_command)
 if [ -n "$BROWSER_CMD" ]; then
@@ -185,10 +193,3 @@ else
     print_warning "⚠️  Could not detect browser command. Please open http://127.0.0.1:8080 manually."
 fi
 
-# Run the app
-print_status "🏃 Running application..."
-if ! python app.py; then
-    print_error "❌ Application failed to start!"
-    echo "Check the error messages above for details."
-    exit 1
-fi
