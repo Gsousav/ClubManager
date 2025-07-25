@@ -52,7 +52,7 @@ scripts/
 *.log 
 
 # Cricket database
-cricket_database/
+data/
 
 # Gunicorn logs
 gunicorn.log
