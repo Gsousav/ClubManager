@@ -188,7 +188,7 @@ fi
 BROWSER_CMD=$(detect_browser_command)
 if [ -n "$BROWSER_CMD" ]; then
     print_status "🌐 Opening browser..."
-    ($BROWSER_CMD http://127.0.0.1:8080) &
+    $BROWSER_CMD http://127.0.0.1:8080
 else
     print_warning "⚠️  Could not detect browser command. Please open http://127.0.0.1:8080 manually."
 fi
