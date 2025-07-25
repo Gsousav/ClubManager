@@ -50,3 +50,8 @@ scripts/
 
 # Logs
 *.log 
+
+# Cricket database
+cricket_database/
+
+clear=$(git clear --cached database.db)

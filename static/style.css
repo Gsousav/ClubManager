@@ -879,3 +879,22 @@ h6 {
     background-color: rgba(0, 122, 255, 0.1);
   }
 }
+
+/* ===================================
+   Dashboard Card Hover Effects
+   ================================= */
+
+/* Dashboard card hover animations */
+.row .col-md-3 a .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.row .col-md-3 a:hover .card {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.row .col-md-3 a:active .card {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
