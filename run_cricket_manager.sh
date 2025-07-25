@@ -168,17 +168,19 @@ fi
 
 # Kill any existing processes
 print_status "🔧 Cleaning up existing processes..."
+pkill -f "gunicorn.*app:app" 2>/dev/null || true
 pkill -f "python.*app.py" 2>/dev/null || true
 
 # Start the application
 print_success "🚀 Starting Cricket Club Manager..."
-echo "   Server will be available at: http://127.0.0.1:8080"
+echo "   Production WSGI server (gunicorn) will be available at: http://127.0.0.1:8080"
+echo "   Running with 2 workers for better performance"
 echo "   Press Ctrl+C to stop"
 echo ""
 
-# Run the app
-print_status "🏃 Running application..."
-if ! python app.py; then
+# Run the app with gunicorn (production WSGI server)
+print_status "🏃 Running application with gunicorn..."
+if ! python -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 app:app; then
     print_error "❌ Application failed to start!"
     echo "Check the error messages above for details."
     exit 1
