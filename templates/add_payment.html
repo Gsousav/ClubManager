@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Record Payment - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 style="font-weight: 600; font-size: 2rem; color: #1d1d1f; margin-bottom: 8px;">Record Payment</h1>
+            <p style="color: #6e6e73;">Add a new payment to a player's account</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body" style="padding: 32px;">
+                <form method="POST">
+                    <!-- Player Selection -->
+                    <div class="mb-4">
+                        <label for="player_id" class="form-label"
+                            style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Player *</label>
+                        <select class="form-select" id="player_id" name="player_id" required>
+                            <option value="">Choose a player...</option>
+                            {% for player in players %}
+                            <option value="{{ player.id }}" {% if request.args.get('player_id')|int==player.id
+                                %}selected{% endif %}>
+                                {{ player.name }}
+                                {% if player.is_member %}(Member){% else %}(Non-Member){% endif %}
+                                - Balance: £{{ "%.2f"|format(player.balance()) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Payment Details Row -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label for="amount" class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Amount *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"
+                                    style="background: #f5f5f7; border-color: #d2d2d7; color: #1d1d1f; font-weight: 500;">£</span>
+                                <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0"
+                                    required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="payment_type" class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Payment Type *</label>
+                            <select class="form-select" id="payment_type" name="payment_type" required>
+                                <option value="match_fee" selected>Match Fee</option>
+                                <option value="membership">Membership</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="method" class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Method *</label>
+                            <select class="form-select" id="method" name="method" required>
+                                <option value="">Choose method...</option>
+                                <option value="cash">Cash</option>
+                                <option value="bank">Bank Transfer</option>
+                                <option value="credit">Credit/Debit Card</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Match Selection (for match fees) -->
+                    <div class="mb-4" id="match_selection" style="display: none;">
+                        <label for="match_id" class="form-label"
+                            style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Match *</label>
+                        <select class="form-select" id="match_id" name="match_id">
+                            <option value="">Choose a match...</option>
+                            {% for match in matches %}
+                            <option value="{{ match.id }}">
+                                {{ match.display_name() }} - £{{ "%.2f"|format(match.fee) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Select which match this payment is for to link it to the match record.
+                        </div>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="mb-4">
+                        <label for="date" class="form-label"
+                            style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Payment Date *</label>
+                        <input type="date" class="form-control" id="date" name="date" value="{{ today }}" required>
+                    </div>
+
+                    <!-- Info Note -->
+                    <div class="alert border-0 rounded-3 mb-4"
+                        style="background: rgba(0, 122, 255, 0.1); color: #007aff; padding: 16px 20px;">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle me-3 mt-1"></i>
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: 4px;">Payment Types:</div>
+                                <ul style="margin: 0; padding-left: 16px; line-height: 1.4;">
+                                    <li><strong>Match Fee:</strong> Payment for attending matches (can be linked to specific matches)</li>
+                                    <li><strong>Membership:</strong> Membership fee</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('payments') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Record Payment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentTypeSelect = document.getElementById('payment_type');
+    const matchSelection = document.getElementById('match_selection');
+    const matchSelect = document.getElementById('match_id');
+    
+    function toggleMatchSelection() {
+        if (paymentTypeSelect.value === 'match_fee') {
+            matchSelection.style.display = 'block';
+            matchSelect.required = true;
+        } else {
+            matchSelection.style.display = 'none';
+            matchSelect.required = false;
+            matchSelect.value = '';
+        }
+    }
+    
+    // Initial check
+    toggleMatchSelection();
+    
+    // Listen for changes
+    paymentTypeSelect.addEventListener('change', toggleMatchSelection);
+});
+</script>
+{% endblock %}
+

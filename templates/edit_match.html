@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Match - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 style="font-weight: 600; font-size: 2rem; color: #1d1d1f; margin-bottom: 8px;">Edit Match</h1>
+            <p style="color: #6e6e73;">Update match details and player attendance for {{ match.date.strftime('%B %d, %Y') }}</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body" style="padding: 32px;">
+                <form method="POST">
+                    <!-- Match Details -->
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-12 mb-3">
+                            <label for="name" class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Match Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                value="{{ match.name or '' }}" placeholder="Leave blank to auto-generate from date">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Optional custom name for this match. If left blank, will default to the match date.
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="date" class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Match Date *</label>
+                            <input type="date" class="form-control" id="date" name="date" value="{{ match.date.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fee" class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">Match Fee *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"
+                                    style="background: #f5f5f7; border-color: #d2d2d7; color: #1d1d1f; font-weight: 500;">£</span>
+                                <input type="number" class="form-control" id="fee" name="fee" step="0.01" min="0"
+                                    required placeholder="10.00" value="{{ match.fee }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Player Selection -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label"
+                                style="font-weight: 500; color: #1d1d1f; margin-bottom: 0;">Select Players Who Attended *</label>
+                            
+                            <!-- Filter Controls -->
+                            <div class="d-flex gap-3 align-items-center">
+                                <div class="filter-group">
+                                    <input type="text" id="playerSearch" class="form-control form-control-sm" 
+                                           placeholder="Search players..." style="width: 200px;">
+                                </div>
+                                <div class="filter-group">
+                                    <select id="membershipFilter" class="form-select form-select-sm" style="width: 150px;">
+                                        <option value="">All Players</option>
+                                        <option value="member">Members Only</option>
+                                        <option value="non-member">Non-Members Only</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Select All Option -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="select_all">
+                                <label class="form-check-label" for="select_all"
+                                    style="font-weight: 500; color: #007aff;">
+                                    Select All Visible Players
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Players Grid Container -->
+                        <div class="player-grid-container">
+                            <div class="row g-3" id="playersGrid">
+                                {% for player in players %}
+                                <div class="col-md-4 player-card-item" data-player-name="{{ player.name|lower }}" 
+                                     data-player-status="{% if player.is_member %}member{% else %}non-member{% endif %}">
+                                    <div class="form-check player-card">
+                                        <input class="form-check-input player-checkbox" type="checkbox"
+                                            id="player_{{ player.id }}" name="players" value="{{ player.id }}"
+                                            {% if player.id in attending_player_ids %}checked{% endif %}>
+                                        <label class="form-check-label w-100 player-card-content" for="player_{{ player.id }}">
+                                            <div class="player-name">{{ player.name }}</div>
+                                            {% if player.is_member %}
+                                            <small class="badge badge-member">Member</small>
+                                            {% else %}
+                                            <small class="badge badge-non-member">Non-Member</small>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="player-empty-state text-center p-4" style="display: none;">
+                            <i class="fas fa-search text-secondary mb-3" style="font-size: 2rem; opacity: 0.5;"></i>
+                            <p class="text-secondary mb-0">No players found matching your search criteria.</p>
+                        </div>
+                    </div>
+
+                    <!-- Info Note -->
+                    <div class="alert border-0 rounded-3 mb-4"
+                        style="background: rgba(0, 122, 255, 0.1); color: #007aff; padding: 16px 20px;">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle me-3 mt-1"></i>
+                            <div>
+                                <strong>Fee Structure:</strong> Members pay the specified fee, non-members pay double. 
+                                Match fees will be automatically updated for selected players as pending dues.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('matches') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize player filtering and selection functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializePlayerFiltering();
+    initializeCreateMatchFunctionality();
+});
+</script>
+{% endblock %} 

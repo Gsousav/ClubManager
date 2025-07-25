@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Matches - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar"></i> Matches</h2>
+    <a href="{{ url_for('create_match') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Create Match
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Match Fee</th>
+                        <th>Players Attended</th>
+                        <th>Total Revenue</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in matches %}
+                    <tr>
+                        <td>
+                            <strong>{{ match.display_name() }}</strong>
+                            {% if match.name %}
+                                <br><small class="text-muted">{{ match.date.strftime('%B %d, %Y') }}</small>
+                            {% endif %}
+                        </td>
+                        <td>&pound;{{ "%.2f"|format(match.fee) }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ match.attendances|length }} players</span>
+                        </td>
+                        <td>
+                            <strong>&pound;{{ "%.2f"|format(match.fee * match.attendances|length) }}</strong>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-info btn-sm" onclick="showMatchDetails({{ match.id }})" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <a href="{{ url_for('edit_match', match_id=match.id) }}"
+                                    class="btn btn-outline-primary btn-sm" title="Edit Match">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ url_for('delete_match', match_id=match.id) }}" method="post"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Match"
+                                        onclick="return confirm('Are you sure you want to delete this match? This will also remove all attendance records for this match.');">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Match Details Modal -->
+<div class="modal fade" id="matchDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Match Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="matchDetailsContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+ 

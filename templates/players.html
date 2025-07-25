@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Players - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 style="font-weight: 600; font-size: 2rem; color: #1d1d1f; margin-bottom: 4px;">
+            <i class="fas fa-users me-2" style="color: #007aff;"></i>Players
+        </h1>
+        <p style="color: #6e6e73; margin: 0;">Manage your cricket club members</p>
+    </div>
+    <div>
+        <a href="{{ url_for('import_players') }}" class="btn btn-outline-success me-2">
+            <i class="fas fa-file-import me-1"></i> Import Excel
+        </a>
+        <a href="{{ url_for('add_player') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Add Player
+        </a>
+    </div>
+</div>
+
+<!-- Players Table -->
+<div class="card">
+    <div class="card-body" style="padding: 24px;">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Status</th>
+                        <th>Membership</th>
+                        <th>Financial Summary</th>
+                        <th>Balance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500; color: #1d1d1f;">{{ player.name }}</div>
+                            <small style="color: #8e8e93;">{{ player.contact_info or 'No contact info' }}</small>
+                        </td>
+                        <td>
+                            {% if player.is_member %}
+                            <span class="badge"
+                                style="background: #30d158; color: white; padding: 4px 8px;">Member</span>
+                            {% else %}
+                            <span class="badge"
+                                style="background: #8e8e93; color: white; padding: 4px 8px;">Non-Member</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if player.is_member %}
+                            <div style="font-weight: 500; color: #007aff;">&pound;{{ "%.0f"|format(player.membership_fee) }}</div>
+                            <small style="color: #6e6e73;">{{ player.membership_status }}</small>
+                            {% else %}
+                            <span style="color: #8e8e93;">Non-Member</span>
+                            <small style="color: #6e6e73; display: block;">Pays 2x match fees</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="font-size: 0.875rem;">
+                                                            <div style="color: #6e6e73;">Owed: <span style="color: #1d1d1f; font-weight: 500;">&pound;{{
+                                "%.2f"|format(player.total_owed()) }}</span></div>
+                            <div style="color: #6e6e73;">Paid: <span style="color: #30d158; font-weight: 500;">&pound;{{
+                                "%.2f"|format(player.total_paid()) }}</span></div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if player.balance() > 0 %}
+                            <span class="balance-negative" style="font-weight: 600;">&pound;{{ "%.2f"|format(player.balance())
+                                }}</span>
+                            {% elif player.balance() < 0 %} <span class="balance-positive" style="font-weight: 600;">&pound;{{
+                                "%.2f"|format(player.balance()|abs) }}</span>
+                                {% else %}
+                                <span style="color: #8e8e93;">&pound;0.00</span>
+                                {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('add_payment') }}?player_id={{ player.id }}"
+                                    class="btn btn-outline-success btn-sm" title="Add Payment">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-info btn-sm"
+                                    onclick="showPlayerDetails({{ player.id }})" title="View Details">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                                <a href="{{ url_for('edit_player', player_id=player.id) }}"
+                                    class="btn btn-outline-primary btn-sm" title="Edit Player">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ url_for('delete_player', player_id=player.id) }}" method="post"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Player"
+                                        onclick="return confirm('Are you sure you want to delete {{ player.name }}? This will also delete all associated payments and match records.');">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Player Details Modal -->
+<div class="modal fade" id="playerDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content"
+            style="border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);">
+            <div class="modal-header" style="border-bottom: 1px solid #f5f5f7; padding: 24px;">
+                <h5 class="modal-title" style="font-weight: 600;">Player Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="playerDetailsContent" style="padding: 24px;">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Add Player - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 style="font-weight: 600; font-size: 2rem; color: #1d1d1f; margin-bottom: 8px;">Add New Player</h1>
+            <p style="color: #6e6e73;">Add a new member to your cricket club</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body" style="padding: 32px;">
+                <form method="POST">
+                    <!-- Player Name -->
+                    <div class="mb-4">
+                        <label for="name" class="form-label"
+                            style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                            Player Name *
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                            placeholder="Enter player's full name">
+                    </div>
+
+                    <!-- Membership Status -->
+                    <div class="mb-4">
+                        <div class="form-check" style="padding: 16px; background: #f5f5f7; border-radius: 8px;">
+                            <input class="form-check-input" type="checkbox" id="is_member" name="is_member" checked>
+                            <label class="form-check-label" for="is_member" style="font-weight: 500; color: #1d1d1f;">
+                                <i class="fas fa-user-check me-2" style="color: #30d158;"></i>Club Member
+                            </label>
+                            <div style="color: #6e6e73; font-size: 0.875rem; margin-top: 4px;">
+                                Members have different fee structures and privileges
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="mb-4">
+                        <label for="contact_info" class="form-label"
+                            style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                            Contact Information
+                        </label>
+                        <textarea class="form-control" id="contact_info" name="contact_info" rows="3"
+                            placeholder="Phone number, email, or other contact details"></textarea>
+                    </div>
+
+                    <!-- Membership Details (shown only for members) -->
+                    <div id="membershipDetails" style="display: block;">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="membership_fee" class="form-label"
+                                    style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                                    Membership Fee
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"
+                                        style="background: #f5f5f7; border-color: #d2d2d7;">&pound;</span>
+                                    <input type="number" step="0.01" class="form-control" id="membership_fee"
+                                        name="membership_fee" value="200.00">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="membership_status" class="form-label"
+                                    style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                                    Membership Status
+                                </label>
+                                <select class="form-select" id="membership_status" name="membership_status">
+                                    <option value="Paid" selected>Paid</option>
+                                    <option value="Unpaid">Unpaid</option>
+                                    <option value="Part Paid">Part Paid</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="color: #6e6e73; font-size: 0.875rem;">
+                            Match fees are calculated automatically: members pay standard rate, non-members pay double the match fee.
+                            Setting status to "Paid" will automatically create a membership payment.
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('players') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Add Player
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show/hide membership details based on member checkbox
+document.getElementById('is_member').addEventListener('change', function() {
+    const membershipDetails = document.getElementById('membershipDetails');
+    if (this.checked) {
+        membershipDetails.style.display = 'block';
+    } else {
+        membershipDetails.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}
+

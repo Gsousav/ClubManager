@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Overdue Players - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-header">
+            <i class="fas fa-exclamation-triangle me-2 icon-warning"></i>Overdue Players
+        </h1>
+        <p class="page-subheader">Players with outstanding balances</p>
+    </div>
+    <a href="{{ url_for('export_overdue') }}" class="btn btn-outline-info">
+        <i class="fas fa-file-excel me-2"></i> Export Excel
+    </a>
+</div>
+
+{% if players %}
+<!-- Main Overdue Table -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="section-header">
+                <i class="fas fa-list section-header-icon icon-danger"></i>
+                Outstanding Balances
+                <span class="table-counter text-secondary text-sm">{{ players|length }} players</span>
+            </h5>
+        </div>
+
+        <!-- Table Filters -->
+        <div class="table-filter">
+            <div>
+                <input type="text" class="form-control table-filter-input" placeholder="Search overdue players..." 
+                       aria-label="Search overdue players">
+            </div>
+            <div>
+                <select class="form-select table-filter-select" aria-label="Filter by status">
+                    <option value="all">All Status</option>
+                    <option value="member">Members Only</option>
+                    <option value="non-member">Non-Members Only</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" 
+                    onclick="clearTableFilters(this.closest('.card'))">
+                <i class="fas fa-times me-1"></i> Clear
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Status</th>
+                        <th>Total Owed</th>
+                        <th>Total Paid</th>
+                        <th>Outstanding</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>
+                            <div class="player-name">{{ player.name }}</div>
+                            <small class="player-contact">{{ player.contact_info or 'No contact info' }}</small>
+                        </td>
+                        <td>
+                            {% if player.is_member %}
+                            <span class="badge badge-member">Member</span>
+                            {% else %}
+                            <span class="badge badge-non-member">Non-Member</span>
+                            {% endif %}
+                        </td>
+                        <td class="table-cell-amount">&pound;{{ "%.2f"|format(player.total_owed()) }}</td>
+                        <td class="table-cell-paid">&pound;{{ "%.2f"|format(player.total_paid()) }}</td>
+                        <td>
+                            <span class="balance-negative">
+                                &pound;{{ "%.2f"|format(player.balance()) }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('add_payment') }}?player_id={{ player.id }}"
+                                class="btn btn-success btn-sm">
+                                <i class="fas fa-plus me-1"></i> Record Payment
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Empty State -->
+        <div class="table-empty-state text-center p-4" style="display: none;">
+            <i class="fas fa-search text-secondary mb-3" style="font-size: 2rem; opacity: 0.5;"></i>
+            <p class="text-secondary mb-0">No overdue players found matching your search criteria.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="section-header">
+                    <i class="fas fa-info-circle section-header-icon icon-primary"></i>
+                    Summary
+                </h6>
+                <div class="list-group list-group-flush list-group-flush-custom">
+                    <div class="list-group-item list-group-item-custom border-0 d-flex justify-content-between align-items-center">
+                        <span class="text-secondary">Total Overdue Players</span>
+                        <strong class="balance-negative">{{ players|length }}</strong>
+                    </div>
+                    <div class="list-group-item list-group-item-custom border-0 d-flex justify-content-between align-items-center">
+                        <span class="text-secondary">Total Outstanding</span>
+                        <strong class="balance-negative">&pound;{{ "%.2f"|format(total_outstanding) }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="section-header">
+                    <i class="fas fa-bolt section-header-icon icon-primary"></i>
+                    Quick Actions
+                </h6>
+                <div class="d-grid gap-3">
+                    <a href="{{ url_for('export_overdue') }}" class="btn btn-outline-info">
+                        <i class="fas fa-file-csv me-2"></i> Export Overdue Report
+                    </a>
+                    <a href="{{ url_for('add_payment') }}" class="btn btn-success">
+                        <i class="fas fa-money-bill me-2"></i> Record Payment
+                    </a>
+                    <a href="{{ url_for('players') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-users me-2"></i> View All Players
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- Empty State -->
+<div class="card">
+    <div class="card-body empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 class="empty-state-title">All Caught Up!</h3>
+        <p class="empty-state-text">
+            All players are up to date with their payments.
+        </p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            <i class="fas fa-home me-2"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

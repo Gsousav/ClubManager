@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Import Players - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1 style="font-weight: 600; font-size: 2rem; color: #1d1d1f; margin-bottom: 8px;">Import Players</h1>
+            <p style="color: #6e6e73;">Upload an Excel file to import multiple players at once</p>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="card mb-4">
+            <div class="card-body" style="padding: 32px;">
+                <form method="POST" enctype="multipart/form-data">
+                    <!-- File Upload -->
+                    <div class="mb-4">
+                        <label for="file" class="form-label"
+                            style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                            Select Excel File (.xlsx) *
+                        </label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx" required>
+                        <div class="form-text" style="color: #8e8e93; margin-top: 8px;">
+                            Choose an Excel file with player information
+                        </div>
+                    </div>
+
+                    <!-- Supported Formats -->
+                    <div class="alert border-0 rounded-3 mb-4"
+                        style="background: rgba(0, 122, 255, 0.1); color: #007aff; padding: 20px;">
+                        <h6 style="font-weight: 600; margin-bottom: 12px;">
+                            <i class="fas fa-info-circle me-2"></i>Supported Excel Formats:
+                        </h6>
+                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                            <li><strong>Subscription Sheet:</strong> Columns "Player", "Member", "Subs Due", "Subs Outstanding", "Cash", "Credit", "Bank"</li>
+                            <li><strong>Matches Sheet:</strong> Columns "Player" and "Member" (Yes/No)</li>
+                            <li><strong>Memberships Sheet:</strong> Columns "Name" and "Membership" with fees</li>
+                            <li><strong>Simple List:</strong> Column "Name" with player names</li>
+                            <li><strong>Nets Sheet:</strong> Column "Name" with player names</li>
+                        </ul>
+                    </div>
+
+                    <!-- Important Notes -->
+                    <div class="alert border-0 rounded-3 mb-4"
+                        style="background: rgba(255, 149, 0, 0.1); color: #ff9500; padding: 20px;">
+                        <h6 style="font-weight: 600; margin-bottom: 12px;">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Important Notes:
+                        </h6>
+                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                            <li>For <strong>Balance Sheets</strong>: Existing payment records will be updated</li>
+                            <li>For other formats: Players with existing names will be skipped</li>
+                            <li>All imported players will be marked as members by default</li>
+                            <li>Maximum file size: 16MB</li>
+                        </ul>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('players') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i> Import Players
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- File Format Guide -->
+        <div class="card">
+            <div class="card-body" style="padding: 24px;">
+                <h5 style="font-weight: 600; color: #1d1d1f; margin-bottom: 20px;">
+                    <i class="fas fa-question-circle me-2" style="color: #5ac8fa;"></i>File Format Examples
+                </h5>
+
+                <!-- Format Examples with Tabs -->
+                <ul class="nav nav-pills mb-4" id="formatTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="balance-tab" data-bs-toggle="pill" data-bs-target="#balance"
+                            type="button" role="tab">
+                            Subscription Sheet
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="matches-tab" data-bs-toggle="pill" data-bs-target="#matches"
+                            type="button" role="tab">
+                            Matches Format
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="memberships-tab" data-bs-toggle="pill"
+                            data-bs-target="#memberships" type="button" role="tab">
+                            Memberships Format
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="simple-tab" data-bs-toggle="pill" data-bs-target="#simple"
+                            type="button" role="tab">
+                            Simple List
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="formatTabsContent">
+                    <!-- Subscription Sheet Format -->
+                    <div class="tab-pane fade show active" id="balance" role="tabpanel">
+                        <h6 style="font-weight: 500; margin-bottom: 12px;">Subscription Sheet Format</h6>
+                        <p style="color: #6e6e73; margin-bottom: 16px;">Import players with individual subscription fees, membership status, and payment breakdown:</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead style="background: #f5f5f7;">
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>Member</th>
+                                        <th>Subs Due</th>
+                                        <th>Subs Outstanding</th>
+                                        <th>Cash</th>
+                                        <th>Credit</th>
+                                        <th>Bank</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Harpal Singh</td>
+                                        <td>Yes</td>
+                                        <td>£115.00</td>
+                                        <td style="color: green;">£45.00</td>
+                                        <td></td>
+                                        <td>£80.00</td>
+                                        <td>£80.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Balraj Singh</td>
+                                        <td>Part Paid</td>
+                                        <td>£75.00</td>
+                                        <td style="color: red;">-£10.00</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>£65.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sikander Singh</td>
+                                        <td>No</td>
+                                        <td>£25.00</td>
+                                        <td>£0.00</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>£25.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert border-0 rounded-3" style="background: rgba(48, 209, 88, 0.1); color: #30d158; padding: 12px; margin-top: 16px;">
+                            <small><i class="fas fa-info-circle me-1"></i> <strong>Subs Due:</strong> Individual subscription fee per player. <strong>Subs Outstanding:</strong> Positive = credit, Negative = owes money. Supports Member status: Yes/No/Part Paid/Overseas.</small>
+                        </div>
+                    </div>
+
+                    <!-- Matches Format -->
+                    <div class="tab-pane fade" id="matches" role="tabpanel">
+                        <h6 style="font-weight: 500; margin-bottom: 12px;">Matches Sheet Format</h6>
+                        <p style="color: #6e6e73; margin-bottom: 16px;">Use columns "Player" and "Member":</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead style="background: #f5f5f7;">
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>Member</th>
+                                        <th>Games Played</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Harpal Singh</td>
+                                        <td>Yes</td>
+                                        <td>10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Amrit Saini</td>
+                                        <td>Yes</td>
+                                        <td>5</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Memberships Format -->
+                    <div class="tab-pane fade" id="memberships" role="tabpanel">
+                        <h6 style="font-weight: 500; margin-bottom: 12px;">Memberships Sheet</h6>
+                        <p style="color: #6e6e73; margin-bottom: 16px;">Include membership fees and status:</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead style="background: #f5f5f7;">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Membership</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Happy</td>
+                                        <td>200</td>
+                                        <td>Unpaid</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Victor</td>
+                                        <td>200</td>
+                                        <td>Paid</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Simple Format -->
+                    <div class="tab-pane fade" id="simple" role="tabpanel">
+                        <h6 style="font-weight: 500; margin-bottom: 12px;">Simple Name List</h6>
+                        <p style="color: #6e6e73; margin-bottom: 16px;">Just player names in a column:</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead style="background: #f5f5f7;">
+                                    <tr>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Harpal Singh</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Amrit Saini</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Navjot Singh</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

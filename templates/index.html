@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cricket Club Manager{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="text-center mb-5">
+    <h1 style="font-weight: 600; font-size: 2.5rem; color: #1d1d1f; margin-bottom: 8px;">Dashboard</h1>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card text-center h-100 border-0"
+            style="background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%); color: white;">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <i class="fas fa-users fa-2x mb-3 opacity-75"></i>
+                <h2 style="font-weight: 600; margin-bottom: 4px;">{{ total_players }}</h2>
+                <p class="mb-0 opacity-90">Total Players</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center h-100 border-0"
+            style="background: linear-gradient(135deg, #ff9500 0%, #ffcc02 100%); color: white;">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3 opacity-75"></i>
+                <h2 style="font-weight: 600; margin-bottom: 4px;">{{ overdue_count }}</h2>
+                <p class="mb-0 opacity-90">Overdue Players</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center h-100 border-0"
+            style="background: linear-gradient(135deg, #30d158 0%, #32d74b 100%); color: white;">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <i class="fas fa-pound-sign fa-2x mb-3 opacity-75"></i>
+                <h2 style="font-weight: 600; margin-bottom: 4px;">&pound;{{ "%.0f"|format(total_dues) }}</h2>
+                <p class="mb-0 opacity-90">Outstanding</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center h-100">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <i class="fas fa-download fa-2x mb-3" style="color: #5ac8fa;"></i>
+                <h6 style="font-weight: 500; margin-bottom: 12px;">Export Data</h6>
+                <a href="{{ url_for('export_overdue') }}" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-file-excel me-1"></i> Excel Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="row g-4">
+    <!-- Players Table -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body" style="padding: 24px;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="section-header">
+                        <i class="fas fa-list section-header-icon icon-primary"></i>
+                        Player Balances
+                        <span class="table-counter text-secondary text-sm">{{ players|length }} players</span>
+                    </h5>
+                    <a href="{{ url_for('add_player') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Add Player
+                    </a>
+                </div>
+
+                <!-- Table Filters -->
+                <div class="table-filter">
+                    <div>
+                        <input type="text" class="form-control table-filter-input" placeholder="Search players..." 
+                               aria-label="Search players">
+                    </div>
+                    <div>
+                        <select class="form-select table-filter-select" aria-label="Filter by status">
+                            <option value="all">All Status</option>
+                            <option value="member">Members Only</option>
+                            <option value="non-member">Non-Members Only</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" 
+                            onclick="clearTableFilters(this.closest('.card'))">
+                        <i class="fas fa-times me-1"></i> Clear
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in players %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 500;">{{ player.name }}</div>
+                                    <small style="color: #8e8e93;">{{ player.contact_info or 'No contact info'
+                                        }}</small>
+                                </td>
+                                <td>
+                                    {% if player.is_member %}
+                                    <span class="badge"
+                                        style="background: #30d158; color: white; padding: 4px 8px;">Member</span>
+                                    {% else %}
+                                    <span class="badge"
+                                        style="background: #8e8e93; color: white; padding: 4px 8px;">Non-Member</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if player.balance() > 0 %}
+                                                                    <span class="balance-negative fw-bold">&pound;{{ "%.2f"|format(player.balance()) }}</span>
+                                {% elif player.balance() < 0 %} <span class="balance-positive fw-bold">&pound;{{
+                                    "%.2f"|format(player.balance()|abs) }}</span>
+                                {% else %}
+                                <span style="color: #8e8e93;">&pound;0.00</span>
+                                        {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('add_payment') }}?player_id={{ player.id }}"
+                                        class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Empty State (hidden by default, shown when no results) -->
+                <div class="table-empty-state text-center p-4" style="display: none;">
+                    <i class="fas fa-search text-secondary mb-3" style="font-size: 2rem; opacity: 0.5;"></i>
+                    <p class="text-secondary mb-0">No players found matching your search criteria.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 style="font-weight: 600; color: #1d1d1f; margin-bottom: 16px;">
+                    <i class="fas fa-bolt me-2" style="color: #ff9500;"></i>Quick Actions
+                </h6>
+                <div class="d-grid gap-3">
+                    <a href="{{ url_for('create_match') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i> New Match
+                    </a>
+                    <a href="{{ url_for('add_payment') }}" class="btn btn-outline-success">
+                        <i class="fas fa-money-bill me-2"></i> Record Payment
+                    </a>
+                    <a href="{{ url_for('overdue') }}" class="btn btn-outline-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i> View Overdue
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="card">
+            <div class="card-body">
+                <h6 class="section-header">
+                    <i class="fas fa-chart-bar section-header-icon icon-info"></i>
+                    Summary
+                </h6>
+                <div class="list-group list-group-flush list-group-flush-custom">
+                    <div class="list-group-item list-group-item-custom d-flex justify-content-between align-items-center border-0">
+                        <span class="text-secondary">Total Players</span>
+                        <strong class="text-primary">{{ total_players }}</strong>
+                    </div>
+                    <div class="list-group-item list-group-item-custom d-flex justify-content-between align-items-center border-0">
+                        <span class="text-secondary">Members</span>
+                        <strong class="text-primary">{{ players|selectattr('is_member')|list|length }}</strong>
+                    </div>
+                    <div class="list-group-item list-group-item-custom d-flex justify-content-between align-items-center border-0">
+                        <span class="text-secondary">Outstanding Players</span>
+                        <strong class="balance-negative">{{ overdue_count }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
