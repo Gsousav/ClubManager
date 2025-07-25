@@ -93,13 +93,10 @@
                                     class="btn btn-outline-primary btn-sm" title="Edit Player">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ url_for('delete_player', player_id=player.id) }}" method="post"
-                                    style="display:inline;">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Player"
-                                        onclick="return confirm('Are you sure you want to delete {{ player.name }}? This will also delete all associated payments and match records.');">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Player"
+                                    onclick="showDeleteConfirmation('{{ player.name }}', {{ player.id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -121,6 +118,50 @@
             </div>
             <div class="modal-body" id="playerDetailsContent" style="padding: 24px;">
                 <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content"
+            style="border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);">
+            <div class="modal-header" style="border-bottom: 1px solid #f5f5f7; padding: 24px;">
+                <h5 class="modal-title" style="font-weight: 600; color: #ff3b30;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Player
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <p style="color: #1d1d1f; margin-bottom: 16px;">
+                    Are you sure you want to delete <strong id="deletePlayerName"></strong>?
+                </p>
+                <div class="alert alert-warning border-0 rounded-3" 
+                     style="background: rgba(255, 149, 0, 0.1); color: #ff9500; padding: 16px 20px;">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-exclamation-triangle me-3 mt-1"></i>
+                        <div>
+                            <strong>Warning:</strong> This action will permanently delete the player and all associated:
+                            <ul class="mb-0 mt-2" style="padding-left: 20px;">
+                                <li>Payment records</li>
+                                <li>Match attendance records</li>
+                                <li>Financial history</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #f5f5f7; padding: 20px 24px;">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <form id="deletePlayerForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Player
+                    </button>
+                </form>
             </div>
         </div>
     </div>

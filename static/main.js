@@ -550,6 +550,34 @@ function testFiltering() {
     }
 }
 
+// Delete confirmation modal functionality
+function showDeleteConfirmation(playerName, playerId) {
+    // Set the player name in the modal
+    document.getElementById('deletePlayerName').textContent = playerName;
+    
+    // Set the form action to the correct delete URL
+    const deleteForm = document.getElementById('deletePlayerForm');
+    deleteForm.action = `/players/delete/${playerId}`;
+    
+    // Show the modal
+    new bootstrap.Modal(document.getElementById('deleteConfirmationModal')).show();
+}
+
+// Delete payment confirmation modal functionality
+function showDeletePaymentConfirmation(playerName, paymentDate, paymentAmount, paymentId) {
+    // Set the payment details in the modal
+    document.getElementById('deletePaymentPlayer').textContent = playerName;
+    document.getElementById('deletePaymentDate').textContent = paymentDate;
+    document.getElementById('deletePaymentAmount').textContent = `£${paymentAmount}`;
+    
+    // Set the form action to the correct delete URL
+    const deleteForm = document.getElementById('deletePaymentForm');
+    deleteForm.action = `/payments/delete/${paymentId}`;
+    
+    // Show the modal
+    new bootstrap.Modal(document.getElementById('deletePaymentConfirmationModal')).show();
+}
+
 // Export functions to global scope for onclick handlers
 window.showPlayerDetails = showPlayerDetails;
 window.showMatchDetails = showMatchDetails;
@@ -557,4 +585,6 @@ window.showPaymentDetails = showPaymentDetails;
 window.confirmDelete = confirmDelete;
 window.clearTableFilters = clearTableFilters;
 window.clearPlayerFilters = clearPlayerFilters;
-window.testFiltering = testFiltering; 
+window.testFiltering = testFiltering;
+window.showDeleteConfirmation = showDeleteConfirmation;
+window.showDeletePaymentConfirmation = showDeletePaymentConfirmation; 
