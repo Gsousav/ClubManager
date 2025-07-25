@@ -975,9 +975,12 @@ def migrate_database():
     except Exception as e:
         print(f"Migration error (this is normal for new databases): {e}")
 
+# Initialize database and run migrations
+with app.app_context():
+    db.create_all()
+    migrate_database()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        migrate_database()
+    # Only run the development server when called directly
     app.run(debug=True, port=8080, host='127.0.0.1')
 
