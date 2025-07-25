@@ -180,8 +180,8 @@ fi
 
 # Kill any existing processes
 print_status "🔧 Cleaning up existing processes..."
-pkill -f "gunicorn.*app:app" 2>/dev/null || true
-pkill -f "python.*app.py" 2>/dev/null || true
+pkill -f "gunicorn.*run:app" 2>/dev/null || true
+pkill -f "python.*run.py" 2>/dev/null || true
 
 # Clean up old log file
 if [ -f "gunicorn.log" ]; then
@@ -198,7 +198,7 @@ echo ""
 
 # Run the app with gunicorn (production WSGI server) in background
 print_status "🏃 Starting gunicorn server in background..."
-nohup python -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 app:app > gunicorn.log 2>&1 &
+nohup python -m gunicorn --bind 127.0.0.1:8080 --workers 2 --timeout 120 run:app > gunicorn.log 2>&1 &
 GUNICORN_PID=$!
 
 # Wait for server to start and check if it's running
@@ -252,7 +252,7 @@ echo "   Log file: gunicorn.log"
 echo ""
 echo "🛑 To stop the server:"
 echo "   kill $GUNICORN_PID"
-echo "   or use: pkill -f 'gunicorn.*app:app'"
+echo "   or use: pkill -f 'gunicorn.*run:app'"
 echo ""
 echo "📝 Server will continue running even after closing this terminal!"
 echo "   The server runs independently using 'nohup'"
