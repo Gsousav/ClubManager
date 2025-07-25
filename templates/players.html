@@ -86,7 +86,7 @@
                                     <i class="fas fa-plus"></i>
                                 </a>
                                 <button type="button" class="btn btn-outline-info btn-sm"
-                                    onclick="showPlayerDetails({{ player.id }})" title="View Details">
+                                    onclick="showPlayerDetails('{{ player.id }}')" title="View Details">
                                     <i class="fas fa-info-circle"></i>
                                 </button>
                                 <a href="{{ url_for('edit_player', player_id=player.id) }}"
@@ -94,7 +94,7 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Player"
-                                    onclick="showDeleteConfirmation('{{ player.name }}', {{ player.id }})">
+                                    onclick="showDeleteConfirmation('{{ player.name }}', '{{ player.id }}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
