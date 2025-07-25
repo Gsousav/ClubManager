@@ -54,4 +54,5 @@ scripts/
 # Cricket database
 cricket_database/
 
-clear=$(git clear --cached database.db)
+# Gunicorn logs
+gunicorn.log
