@@ -79,7 +79,7 @@ function initializeCreateMatchFunctionality() {
             });
         });
         
-        // Initialize the select all state
+        // Initialize the select all state and selected counter
         updateSelectAllForVisible();
     }
 }
@@ -433,15 +433,8 @@ function filterPlayers() {
         }
     });
     
-    // Update counter
-    if (counter) {
-        const totalPlayers = playerItems.length;
-        if (visibleCount === totalPlayers) {
-            counter.textContent = `${totalPlayers} players`;
-        } else {
-            counter.textContent = `${visibleCount} of ${totalPlayers} players`;
-        }
-    }
+    // Update counter to show selected players instead of visible
+    updateSelectedPlayerCounter();
     
     // Show/hide empty state
     if (emptyState && gridContainer) {
@@ -471,11 +464,8 @@ function clearPlayerFilters() {
         item.style.display = '';
     });
     
-    // Update counter
-    const counter = document.querySelector('.player-counter');
-    if (counter) {
-        counter.textContent = `${playerItems.length} players`;
-    }
+    // Update counter to show selected players
+    updateSelectedPlayerCounter();
     
     // Hide empty state
     const emptyState = document.querySelector('.player-empty-state');
@@ -508,6 +498,31 @@ function updateSelectAllForVisible() {
     } else {
         selectAllCheckbox.indeterminate = false;
         selectAllCheckbox.checked = false;
+    }
+    
+    // Update the selected player counter
+    updateSelectedPlayerCounter();
+}
+
+// New function to update counter with selected players
+function updateSelectedPlayerCounter() {
+    const counter = document.querySelector('.player-counter');
+    if (!counter) return;
+    
+    const allPlayerCheckboxes = document.querySelectorAll('.player-checkbox');
+    const selectedCheckboxes = Array.from(allPlayerCheckboxes).filter(cb => cb.checked);
+    const totalPlayers = allPlayerCheckboxes.length;
+    const selectedCount = selectedCheckboxes.length;
+    
+    if (selectedCount === 0) {
+        counter.textContent = `${totalPlayers} players`;
+        counter.className = 'player-counter text-secondary text-sm';
+    } else if (selectedCount === 1) {
+        counter.textContent = `1 player selected`;
+        counter.className = 'player-counter text-primary text-sm fw-medium';
+    } else {
+        counter.textContent = `${selectedCount} players selected`;
+        counter.className = 'player-counter text-primary text-sm fw-medium';
     }
 }
 
