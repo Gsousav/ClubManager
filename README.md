@@ -6,7 +6,7 @@ Internal cricket club management system for tracking players, matches, and payme
 
 ```bash
 # Clone the repo
-git clone [[repo-url]](https://github.com/Gsousav/ClubManager)
+git clone (https://github.com/Gsousav/ClubManager)
 cd cricket-club-manager
 
 # Run the app (handles everything automatically)
