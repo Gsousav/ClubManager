@@ -1,27 +1,34 @@
 /* ===================================
-   Cricket Club Manager - Modern CSS
+   Pichanga Manager - Modern CSS
    ================================= */
 
 /* CSS Custom Properties (Variables) */
 :root {
-  /* Colors - Apple Design System Inspired */
-  --color-primary: #007aff;
-  --color-primary-hover: #0056cc;
-  --color-success: #30d158;
-  --color-success-hover: #28cd4f;
+  /* New Color Palette */
+  --alabaster: #f1f2ebff;
+  --timberwolf: #d8dad3ff;
+  --cambridge-blue: #a4c2a5ff;
+  --ebony: #566246ff;
+  --davys-gray: #4a4a48ff;
+  
+  /* Color Mappings */
+  --color-primary: var(--cambridge-blue);
+  --color-primary-hover: var(--ebony);
+  --color-success: var(--cambridge-blue);
+  --color-success-hover: var(--ebony);
   --color-warning: #ff9500;
   --color-danger: #ff3b30;
-  --color-info: #5ac8fa;
+  --color-info: var(--cambridge-blue);
   
-  /* Neutrals */
-  --color-text-primary: #1d1d1f;
-  --color-text-secondary: #6e6e73;
-  --color-text-tertiary: #8e8e93;
-  --color-background: #fafafa;
+  /* Neutrals using new palette */
+  --color-text-primary: var(--davys-gray);
+  --color-text-secondary: var(--ebony);
+  --color-text-tertiary: var(--timberwolf);
+  --color-background: var(--alabaster);
   --color-surface: #ffffff;
-  --color-border: rgba(0, 0, 0, 0.06);
-  --color-border-light: #f5f5f7;
-  --color-border-medium: #d2d2d7;
+  --color-border: rgba(86, 98, 70, 0.1);
+  --color-border-light: var(--timberwolf);
+  --color-border-medium: var(--ebony);
   
   /* Typography */
   --font-family-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
