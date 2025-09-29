@@ -1,4 +1,4 @@
-# Cricket Club Manager
+# Pichanga Manager
 
 Internal cricket club management system for tracking players, matches, and payments.
 

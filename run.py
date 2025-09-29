@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Cricket Club Manager - Main Application Entry Point
+Pichanga Manager - Main Application Entry Point
 
-This is the main entry point for the Cricket Club Manager application.
+This is the main entry point for the Pichanga Manager application.
 Run this file to start the development server.
 
 Usage:

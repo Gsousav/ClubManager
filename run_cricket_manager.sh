@@ -1,6 +1,6 @@
 #!/bin/bash
-# Cricket Club Manager Launcher
-# Robust script to run the Cricket Club Manager locally
+# Pichanga Manager Launcher
+# Robust script to run the Pichanga Manager locally
 
 set -e  # Exit on any error
 
@@ -45,7 +45,7 @@ detect_browser_command() {
     fi
 }
 
-echo -e "${BLUE}🏏 Cricket Club Manager${NC}"
+echo -e "${BLUE}🏏 Pichanga Manager${NC}"
 echo "========================="
 
 # Check if App directory exists and is writable
@@ -222,7 +222,7 @@ if [ -f "gunicorn.log" ]; then
 fi
 
 # Start the application
-print_success "🚀 Starting Cricket Club Manager..."
+print_success "🚀 Starting Pichanga Manager..."
 echo "   Production WSGI server (gunicorn) will be available at: http://127.0.0.1:8080"
 echo "   Running with 2 workers for better performance"
 echo "   Press Ctrl+C to stop"
@@ -274,7 +274,7 @@ else
     print_warning "⚠️  Could not detect browser command. Please open http://127.0.0.1:8080 manually."
 fi
 
-print_success "✨ Cricket Club Manager is now running!"
+print_success "✨ Pichanga Manager is now running!"
 echo ""
 echo "📊 Server Information:"
 echo "   URL: http://127.0.0.1:8080"

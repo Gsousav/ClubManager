@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cricket Club Manager - Backward Compatibility Module
+Pichanga Manager - Backward Compatibility Module
 
 This module provides backward compatibility by importing the refactored application.
 The main application logic has been moved to a proper Flask application factory pattern.

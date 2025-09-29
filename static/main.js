@@ -1,4 +1,4 @@
-// Custom JS for Cricket Club Manager 
+// Custom JS for Pichanga Manager 
 
 // Document ready functionality
 document.addEventListener('DOMContentLoaded', function () {
